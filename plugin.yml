@@ -1,0 +1,5 @@
+name: FTop
+main: com.zeshanaslam.ftop.Main
+version: 1.2.6
+depend: [HolographicDisplays, Factions, Vault, Citizens, Essentials, ProtocolLib]
+softdepend: [MobArena, KoTH, HealthBar, PlaceholderAPI, SilkSpawners, SupplyDrop]

@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="FTop:jar">
+    <output-path>$PROJECT_DIR$/../../MC/1.8.8/plugins</output-path>
+    <root id="archive" name="FTop.jar">
+      <element id="module-output" name="FTop" />
+      <element id="file-copy" path="$PROJECT_DIR$/config.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/sqlite-jdbc-3.27.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/intake-bukkit-1.1-20190430.230347-1 (1).jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/challenges.yml" />
+    </root>
+  </artifact>
+</component>

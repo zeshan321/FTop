@@ -1,0 +1,65 @@
+# Seconds
+Refresh: 1
+
+Npc:
+  Default: Notch
+  Hologram:
+    XOffset: 0.5
+    YOffset: 3
+    ZOffset: 0.5
+    Data:
+      - "&bRank: &a%rank%"
+      - "&bFaction: &a%faction%"
+      - "&bLeader: &a%leader%"
+      - "&bPoints: &a%totalpoints%"
+
+Messages:
+  CreatedNpcs: "&bCreated npcs!"
+  LookAtNpc: "&bMust be looking at npc!"
+  DeletedNpc: "&bDeleted npcs!"
+  NoMorePages: "&cThere are no more pages."
+  NoFaction: "&bYou do not have a faction!"
+
+Top:
+  Text:
+    - "&bPage &a%page%/%totalpages%&b:"
+    - "&bServer total: &a%totalpoints%"
+    - "&b%rank%. &a%factionname%: &b%points%"
+  Hover:
+    - "&bLeader: &a%leader%"
+    - "&bTotal points: &a%points%"
+    - "&bBlocks: &a%blocks%"
+    - ""
+    - "&bRichest Member: &a%richest%"
+    - "&bRichest memeber points: &a%richestpoints%"
+    - ""
+    - "&bAmount:"
+    - "%block-check{ZOMBIE_MOB_SPAWNER}% x %count%"
+    - "%dailyfinished%"
+    - "%weeklyfinished%"
+    - "%blockpoints%"
+    - "%inventorypoints%"
+    - "%ecopoints%"
+
+# For blocks to be transferred on claim or unclaim they must be included in the list.
+# For example if you want chests to transfer over you would add it to the placed list as shown below.
+Worth:
+  Eco:
+    # 100 = 0.1 points
+    Amount: 100
+    Points: 0.1
+  Placed:
+    DEFAULT:
+      Points: 1
+    # * means any data
+    CHEST-*:
+      Points: 0
+    ZOMBIE_MOB_SPAWNER:
+      Points: 50
+    CREEPER_MOB_SPAWNER:
+      Points: 60
+  Inventories:
+    DEFAULT:
+      Points: 1
+    SAPLING-5:
+      Points: 10

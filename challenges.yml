@@ -1,0 +1,91 @@
+# Objectives: Fish, MobArenaWaves, Travel, SupplyDrop, Make, Kill, KOTH, BlockBreak, BlockPlace, CrateBoss
+# Objectives are not limited to the list above. Custom objectives can be created that can be updated by the "ftop update" command. Unique objective name required.
+#
+# Stats can be modified with /ftopadmin update <objective name> <player> <amount>
+# Examples:
+# - BlockBreak-COAL_ORE.
+# - BlockBreak-* or Kill-* for all
+# - CrateBoss updated by: /ftopadmin update CrateBoss <player> 1 // Adds 1 to CrateBoss stat for faction of player.
+# - SupplyDrop updated by: /ftopadmin update SupplyDrop <player> 1
+#
+# You can manually update automatic stats as well:
+# - BlockBreak-COAL_ORE updated by: /ftopadmin update BlockBreak-COAL_ORE <player> 1
+
+Daily:
+  Data:
+    # %player% for player name
+    # %uuid% for uuid. If plugin supports this, it is recommended.
+    # %factionid% for faction id.
+    Rewards:
+      - "token give %player% 1000"
+      - "ftop points %uuid% %factionid% 500"
+    Amount:
+      Min: 3
+      Max: 6
+  Objectives:
+    Fish:
+      Amount: 750-1500
+      Text: "&cCatch %amount% fish (%complete%)"
+    MobArenaWaves:
+      Amount: 4-10
+      Text: "&cComplete %amount% mob arena waves (%complete%)"
+    Travel-Foot:
+      Amount: 2624-3000
+      Text: "&cTravel %amount% blocks by %type% (%complete%)"
+    Kill-Cow:
+      Amount: 5-10
+      Text: "&cKill %amount% %type% (%complete%)"
+    BlockBreak-COAL_ORE:
+      Amount: 5-10
+      Text: "&cBreak %amount% %type% (%complete%)"
+    BlockPlace-COAL_ORE:
+      Amount: 5-10
+      Text: "&cPlace %amount% %type% (%complete%)"
+
+Weekly:
+  Data:
+    Rewards:
+      - "token give %player% 10000"
+      - "ftop points %uuid% %factionid% 5000"
+    Amount:
+      Min: 4
+      Max: 9
+  Objectives:
+    SupplyDrop:
+      Amount: 10-15
+      Text: "&cCapture %amount% supply drops (%complete%)"
+    Make:
+      Amount: 135541740-135541740
+      Text: "&cMake $%amount% (%complete%)"
+    Travel-Horse:
+      Amount: 500-6540
+      Text: "&cTravel %amount% blocks by %type% (%complete%)"
+    Fish:
+      Amount: 3000-3310
+      Text: "&cCatch %amount% fish (%complete%)"
+    Travel-Boat:
+      Amount: 6000-6540
+      Text: "&cTravel %amount% blocks by %type% (%complete%)"
+    KOTH:
+      Amount: 1-5
+      Text: "&cWin %amount% KOTH event (%complete%)"
+    Kill-Cow:
+      Amount: 5-10
+      Text: "&cKill %amount% %type% (%complete%)"
+    Kill-Pig:
+      Amount: 5-10
+      Text: "&cKill %amount% %type% (%complete%)"
+    MobArenaWaves:
+      Amount: 4-10
+      Text: "&cComplete %amount% mob arena waves (%complete%)"
+
+Text:
+  - "&aActive Faction Challenges"
+  - "&cDaily objectives - &a1,000 tokens + 500 points"
+  - "%dailyobjectives%"
+  - ""
+  - "&cWeekly objectives - &a10,000 tokens + 5000 points"
+  - "%weeklyobjectives%"
+
+Completed:
+  - "&bYour faction has completed your %type% challenges!"
