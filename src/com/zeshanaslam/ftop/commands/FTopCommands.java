@@ -10,6 +10,7 @@ import com.zeshanaslam.ftop.Main;
 import com.zeshanaslam.ftop.config.ConfigStore;
 import com.zeshanaslam.ftop.config.npc.Npc;
 import com.zeshanaslam.ftop.config.npc.SafeLocation;
+import com.zeshanaslam.ftop.database.handlers.LocationData;
 import com.zeshanaslam.ftop.utils.TargetHelper;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
@@ -199,5 +200,27 @@ public class FTopCommands {
         materials = materials.substring(0, materials.length() - 4);
         main.dbContext.getBlockTable().removeBlockByMaterial(materials);
         sender.sendMessage("Done.");
+    }
+
+    @Command(
+            aliases = "recalc",
+            desc = "Recalc data",
+            perms = "ftop.recalc"
+    )
+    public void recalc (CommandSender sender) {
+        int removed = 0;
+
+        for (LocationData locationData: main.dbContext.getBlockTable().getAll()) {
+            String material = main.fTopUtils.getMaterialName(locationData.location.getBlock());
+
+            if (!material.equals(locationData.material)) {
+                removed++;
+
+                Location location = locationData.location;
+                main.dbContext.getBlockTable().asyncRemoveBlock(location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            }
+        }
+
+        sender.sendMessage(ChatColor.GREEN + "Removed " + removed + " blocks during recalculation.");
     }
 }

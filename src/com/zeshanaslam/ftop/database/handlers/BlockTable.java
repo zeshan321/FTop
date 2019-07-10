@@ -9,6 +9,7 @@ import com.zeshanaslam.ftop.config.WorthData;
 import com.zeshanaslam.ftop.database.DBContext;
 import com.zeshanaslam.ftop.utils.FTopStatsCompare;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
@@ -73,6 +74,31 @@ public class BlockTable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<LocationData> getAll() {
+        String sql = "SELECT * FROM blocks";
+
+        List<LocationData> location = new ArrayList<>();
+        try (PreparedStatement preparedStatement = dbContext.getConnection().prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String material = resultSet.getString(3);
+                UUID world = (resultSet.getString(5) == null) ? null : UUID.fromString(resultSet.getString(5));
+                int blockX = resultSet.getInt(6);
+                int blockY = resultSet.getInt(7);
+                int blockZ = resultSet.getInt(8);
+
+                if (world != null) {
+                    location.add(new LocationData(new Location(Bukkit.getWorld(world), blockX, blockY, blockZ), material));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return location;
     }
 
     public void asyncRemoveBlock(UUID world, int blockX, int blockY, int blockZ) {

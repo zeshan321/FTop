@@ -89,6 +89,17 @@ public class BlockListeners implements Listener {
     }
 
     @EventHandler
+    public void onExplode(EntityExplodeEvent event) {
+        if (event.isCancelled())
+            return;
+
+        for (Block block: event.blockList()) {
+            Location location = block.getLocation();
+            main.dbContext.getBlockTable().asyncRemoveBlock(block.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        }
+    }
+
+    @EventHandler
     public void onClaim(LandClaimEvent event) {
         if (event.isCancelled())
             return;
