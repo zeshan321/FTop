@@ -6,6 +6,7 @@ import com.massivecraft.factions.Factions;
 import com.zeshanaslam.ftop.FTopStats;
 import com.zeshanaslam.ftop.Main;
 import com.zeshanaslam.ftop.config.WorthData;
+import com.zeshanaslam.ftop.config.npc.SafeLocation;
 import com.zeshanaslam.ftop.database.DBContext;
 import com.zeshanaslam.ftop.utils.FTopStatsCompare;
 import org.bukkit.Bukkit;
@@ -76,6 +77,16 @@ public class BlockTable {
         }
     }
 
+    public void vacuum() {
+        String sql = "vacuum";
+
+        try (PreparedStatement preparedStatement = dbContext.getConnection().prepareStatement(sql)) {
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<LocationData> getAll() {
         String sql = "SELECT * FROM blocks";
 
@@ -90,9 +101,8 @@ public class BlockTable {
                 int blockY = resultSet.getInt(7);
                 int blockZ = resultSet.getInt(8);
 
-                if (world != null) {
-                    location.add(new LocationData(new Location(Bukkit.getWorld(world), blockX, blockY, blockZ), material));
-                }
+                location.add(new LocationData(new SafeLocation(world,
+                        blockX, blockY, blockZ, 0, 0), material));
             }
         } catch (SQLException e) {
             e.printStackTrace();

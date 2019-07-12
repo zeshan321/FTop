@@ -16,6 +16,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -24,6 +25,9 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class FTopCommands {
 
@@ -192,13 +196,14 @@ public class FTopCommands {
             perms = "ftop.purge"
     )
     public void purge(CommandSender sender) {
-        String materials = "MATERIAL != 'CHEST' AND Material NOT LIKE 'CHEST-%' AND ";
+        StringBuilder materials = new StringBuilder("MATERIAL != 'CHEST' AND Material NOT LIKE 'CHEST-%' AND ");
         for (String type: main.configStore.placed.keySet()) {
-            materials += "Material != '" + type + "' AND ";
+            materials.append("Material != '").append(type).append("' AND ");
         }
 
-        materials = materials.substring(0, materials.length() - 4);
-        main.dbContext.getBlockTable().removeBlockByMaterial(materials);
+        materials = new StringBuilder(materials.substring(0, materials.length() - 4));
+        main.dbContext.getBlockTable().removeBlockByMaterial(materials.toString());
+        main.dbContext.getBlockTable().vacuum();
         sender.sendMessage("Done.");
     }
 
@@ -207,20 +212,53 @@ public class FTopCommands {
             desc = "Recalc data",
             perms = "ftop.recalc"
     )
-    public void recalc (CommandSender sender) {
-        int removed = 0;
+    public void recalc(CommandSender sender, int debug) {
+        sender.sendMessage(ChatColor.GREEN + "Purging before recalc...");
+        Bukkit.getServer().dispatchCommand(sender, "ftopadmin purge");
+        sender.sendMessage(ChatColor.GREEN + "Purging Complete!");
 
-        for (LocationData locationData: main.dbContext.getBlockTable().getAll()) {
-            String material = main.fTopUtils.getMaterialName(locationData.location.getBlock());
+        sender.sendMessage(ChatColor.GREEN + "Starting recalc. This may take a while...");
 
-            if (!material.equals(locationData.material)) {
-                removed++;
+        Bukkit.getScheduler().runTaskAsynchronously(main, new Runnable() {
+            @Override
+            public void run() {
+                int removed = 0;
+                long startTime = System.currentTimeMillis();
 
-                Location location = locationData.location;
-                main.dbContext.getBlockTable().asyncRemoveBlock(location.getWorld().getUID(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                for (LocationData location: main.dbContext.getBlockTable().getAll()) {
+                    try {
+                        String locationMaterial = "None";
+                        if (Bukkit.getWorld(location.location.world) != null) {
+                            locationMaterial = Bukkit.getScheduler().callSyncMethod(main, new Callable<String>() {
+                                @Override
+                                public String call() throws Exception {
+                                    return main.fTopUtils.getMaterialName(location.location.getLocation().getBlock());
+                                }
+                            }).get();
+                        }
+
+                        if (!locationMaterial.equals(location.material) || locationMaterial.equals("None")) {
+                            removed++;
+
+                            if (debug == 1 || debug == 2) {
+                                sender.sendMessage(ChatColor.GREEN + "Expected " + location.material + " found " + locationMaterial +  " removed @ " + location.location.x + " " + location.location.y + " " + location.location.z + ". Current amount removed: " + removed);
+                            }
+
+                            main.dbContext.getBlockTable().removeBlock(location.location.world, location.location.x, location.location.y, location.location.z);
+                        } else {
+                            if (debug == 2) {
+                                sender.sendMessage(ChatColor.GREEN + "Expected found " + locationMaterial +  " @ " + location.location.x + " " + location.location.y + " " + location.location.z + ". Current amount removed: " + removed);
+                            }
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                main.dbContext.getBlockTable().vacuum();
+                sender.sendMessage(ChatColor.GREEN + "Removed " + removed + " blocks during recalculation.");
+                sender.sendMessage("Took " + TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime) + " seconds.");
             }
-        }
-
-        sender.sendMessage(ChatColor.GREEN + "Removed " + removed + " blocks during recalculation.");
+        });
     }
 }

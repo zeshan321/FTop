@@ -30,6 +30,8 @@ public class DBContext {
         } else {
             this.connection = DriverManager.getConnection("jdbc:sqlite:plugins/FTop/data.db");
         }
+
+        getBlockTable().vacuum();
     }
 
     public Main getInstance() {

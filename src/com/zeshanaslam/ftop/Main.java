@@ -15,6 +15,7 @@ import com.zeshanaslam.ftop.commands.CommandOverride;
 import com.zeshanaslam.ftop.commands.FTopCommands;
 import com.zeshanaslam.ftop.config.ConfigStore;
 import com.zeshanaslam.ftop.database.DBContext;
+import com.zeshanaslam.ftop.database.handlers.LocationData;
 import com.zeshanaslam.ftop.listeners.*;
 import com.zeshanaslam.ftop.utils.FTopExpansion;
 import com.zeshanaslam.ftop.utils.FTopUtils;
@@ -22,6 +23,7 @@ import com.zeshanaslam.ftop.utils.WrapperPlayServerPlayerInfo;
 import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -140,6 +142,8 @@ public class Main extends JavaPlugin {
                 wrapper.setData(newPlayerInfoDataList);
             }
         });
+
+        //test();
     }
 
     @Override
@@ -183,5 +187,21 @@ public class Main extends JavaPlugin {
         Plugin plugin = getServer().getPluginManager().getPlugin("HealthBar");
 
         hookedIntoHealthBar = plugin != null;
+    }
+
+    private void test() {
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "ftopadmin purge");
+        List<LocationData> locationDataList = dbContext.getBlockTable().getAll();
+
+        int removed = 0;
+        for (LocationData locationData: locationDataList) {
+            String found = fTopUtils.getMaterialName(locationData.location.getLocation().getBlock());
+
+            if (!found.equals(locationData.material)) {
+                removed++;
+                dbContext.getBlockTable().removeBlock(locationData.location.world, locationData.location.x, locationData.location.y, locationData.location.z);
+                System.out.println(ChatColor.GREEN + "Expected " + locationData.material + " found " + found +  " removed @ " + locationData.location.x + " " + locationData.location.y + " " + locationData.location.z + ". Current amount removed: " + removed);
+            }
+        }
     }
 }
