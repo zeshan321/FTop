@@ -15,6 +15,8 @@ public class FTopStats {
     public double blockTotalPoints;
     public double ecoTotalPoints;
     public double invTotalPoints;
+    public int warning;
+    public int strike;
 
     public FTopStats(String factionId) {
         this.factionId = factionId;

@@ -128,6 +128,34 @@ public class FTopCommands {
     }
 
     @Command(
+            aliases = "warning",
+            desc = "Adds warning to faction",
+            perms = "ftop.warning"
+    )
+    public void addWarning(CommandSender sender, String factionTag) {
+        Faction faction = Factions.getInstance().getBestTagMatch(factionTag);
+        if (faction == null)
+            return;
+
+        main.dbContext.getBlockTable().asyncLogBlock(UUID.randomUUID(), "WARNING", faction.getId(), null, -9999, -9999, -9999);
+        sender.sendMessage(ChatColor.GREEN + "Added warning to " + faction.getTag());
+    }
+
+    @Command(
+            aliases = "strike",
+            desc = "Adds strike to faction",
+            perms = "ftop.strike"
+    )
+    public void addStrike(CommandSender sender, String factionTag) {
+        Faction faction = Factions.getInstance().getBestTagMatch(factionTag);
+        if (faction == null)
+            return;
+
+        main.dbContext.getBlockTable().asyncLogBlock(UUID.randomUUID(), "STRIKE", faction.getId(), null, -9999, -9999, -9999);
+        sender.sendMessage(ChatColor.GREEN + "Added strike to " + faction.getTag());
+    }
+
+    @Command(
             aliases = "ver",
             desc = "Gets version",
             perms = "ftop.ver"

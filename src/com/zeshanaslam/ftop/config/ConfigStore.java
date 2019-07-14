@@ -22,6 +22,9 @@ public class ConfigStore {
     public ChallengesStore challengesStore;
     public List<String> topText;
     public List<String> topHover;
+    public int maxThreads;
+    public double strikePercentRemoved;
+    public double warningPercentRemoved;
 
     public ConfigStore(Main main) {
         this.main = main;
@@ -72,6 +75,9 @@ public class ConfigStore {
         }
 
         challengesStore = new ChallengesStore(main);
+        maxThreads = main.getConfig().getInt("MaxThreads");
+        strikePercentRemoved = main.getConfig().getDouble("StrikePercentRemoved");
+        warningPercentRemoved = main.getConfig().getDouble("WarningPercentRemoved");
     }
 
     public void save() {

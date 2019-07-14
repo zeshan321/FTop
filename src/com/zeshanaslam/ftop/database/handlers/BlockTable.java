@@ -53,7 +53,7 @@ public class BlockTable {
     }
 
     public void asyncLogBlock(UUID playerUUID, String material, String factionId, UUID world, int blockX, int blockY, int blockZ) {
-        dbContext.getInstance().getServer().getScheduler().runTaskAsynchronously(dbContext.getInstance(), () -> {
+        dbContext.getInstance().executor.submit(() -> {
             logBlock(playerUUID, material, factionId, world, blockX, blockY, blockZ);
         });
     }
@@ -112,7 +112,7 @@ public class BlockTable {
     }
 
     public void asyncRemoveBlock(UUID world, int blockX, int blockY, int blockZ) {
-        dbContext.getInstance().getServer().getScheduler().runTaskAsynchronously(dbContext.getInstance(), () -> {
+        dbContext.getInstance().executor.submit(() -> {
             removeBlock(world, blockX, blockY, blockZ);
         });
     }
@@ -258,6 +258,8 @@ public class BlockTable {
                 int weeklyFinished = 0;
                 double ecoPoints = 0;
                 double invPoints = 0;
+                int warning = 0;
+                int strikes = 0;
 
                 for (BlockTableData blockTableData : blockTableDataList) {
                     if (blockTableData.material.equals("WEEKFIN")) {// A single record = 1 completed weekly challenge.
@@ -267,6 +269,10 @@ public class BlockTable {
                     } else if (blockTableData.material.startsWith("CUSTOMFTOP")) { // Manually added points.
                         double amount = Double.parseDouble(blockTableData.material.replace("CUSTOMFTOP", ""));
                         points = points + amount;
+                    } else if (blockTableData.material.startsWith("WARNING")) {
+                        warning++;
+                    } else if (blockTableData.material.startsWith("STRIKE")) {
+                        strikes++;
                     } else {
                         // Added this to not create sync methods on non-chest blocks. Without large data takes long to calculate.
                         if (blockTableData.material.contains("CHEST")) {
@@ -370,12 +376,22 @@ public class BlockTable {
                 }
 
                 points = points + ecoPoints;
-                fTopStats.totalPoints = points;
+
+                double strikeRemove = (points * dbContext.getInstance().configStore.strikePercentRemoved);
+                double warningRemove = (points * dbContext.getInstance().configStore.warningPercentRemoved);
+                if (strikes > 0)
+                    points = points - (strikeRemove * strikes);
+                if (warning > 0)
+                    points = points - (warningRemove * warning);
+
+                fTopStats.totalPoints = points ;
                 fTopStats.dailyFinished = dailyFinished;
                 fTopStats.weeklyFinished = weeklyFinished;
                 fTopStats.blockTotalPoints = blockPoints;
                 fTopStats.invTotalPoints = invPoints;
                 fTopStats.ecoTotalPoints = ecoPoints;
+                fTopStats.strike = strikes;
+                fTopStats.warning = warning;
                 fTopStatsHashMap.put(faction.getId(), fTopStats);
             }
 

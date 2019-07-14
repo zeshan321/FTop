@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Main extends JavaPlugin {
 
@@ -44,6 +46,7 @@ public class Main extends JavaPlugin {
     public BukkitTask challengesTask;
     public boolean hookedIntoHealthBar;
     public SilkUtil silkUtil;
+    public ThreadPoolExecutor executor;
 
     @Override
     public void onEnable() {
@@ -55,6 +58,9 @@ public class Main extends JavaPlugin {
         // Config
         saveDefaultConfig();
         configStore = new ConfigStore(this);
+
+        // Thread executor
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(configStore.maxThreads);
 
         // Database
         try {
@@ -150,6 +156,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
 
+        executor.shutdown();
         configStore.save();
         fTopTask.cancel();
         challengesTask.cancel();

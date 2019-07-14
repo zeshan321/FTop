@@ -1,3 +1,5 @@
+MaxThreads: 20
+
 # Seconds
 Refresh: 1
 
@@ -63,3 +65,6 @@ Worth:
       Points: 1
     SAPLING-5:
       Points: 10
+
+StrikePercentRemoved: 0.10
+WarningPercentRemoved: 0.10
