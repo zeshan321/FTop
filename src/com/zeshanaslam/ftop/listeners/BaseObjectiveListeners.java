@@ -36,7 +36,7 @@ public class BaseObjectiveListeners implements Listener {
         if (event.getFaction() != null && event.getFaction().getId() != null) {
             main.dbContext.getBlockTable().asyncDeleteFactionData(event.getFaction().getId());
         } else {
-            if (event.getFPlayer() != null && event.getFPlayer().getFactionId() != null) {
+            if (event.getFPlayer() != null && event.getFPlayer().hasFaction() && event.getFPlayer().getFactionId() != null) {
                 main.dbContext.getBlockTable().asyncDeleteFactionData(event.getFPlayer().getFactionId());
             }
         }
