@@ -33,13 +33,7 @@ public class BaseObjectiveListeners implements Listener {
 
     @EventHandler
     public void onDisband(FactionDisbandEvent event) {
-        if (event.getFaction() != null && event.getFaction().getId() != null) {
-            main.dbContext.getBlockTable().asyncDeleteFactionData(event.getFaction().getId());
-        } else {
-            if (event.getFPlayer() != null && event.getFPlayer().hasFaction() && event.getFPlayer().getFactionId() != null) {
-                main.dbContext.getBlockTable().asyncDeleteFactionData(event.getFPlayer().getFactionId());
-            }
-        }
+        main.dbContext.getBlockTable().asyncDeleteFactionData(event.getFaction().getId());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)

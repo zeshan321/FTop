@@ -17,6 +17,7 @@ public class FTopStats {
     public double invTotalPoints;
     public int warning;
     public int strike;
+    public int kothAdmin;
 
     public FTopStats(String factionId) {
         this.factionId = factionId;

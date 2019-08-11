@@ -10,6 +10,7 @@ import com.zeshanaslam.ftop.Main;
 import com.zeshanaslam.ftop.config.ConfigStore;
 import com.zeshanaslam.ftop.config.npc.Npc;
 import com.zeshanaslam.ftop.config.npc.SafeLocation;
+import com.zeshanaslam.ftop.database.handlers.BlockTable;
 import com.zeshanaslam.ftop.database.handlers.LocationData;
 import com.zeshanaslam.ftop.utils.TargetHelper;
 import net.citizensnpcs.api.CitizensAPI;
@@ -142,6 +143,23 @@ public class FTopCommands {
     }
 
     @Command(
+            aliases = "koth",
+            desc = "Adds amount to koth wins.",
+            perms = "ftop.warning"
+    )
+    public void addKoth(CommandSender sender, String factionTag, int amount) {
+        Faction faction = Factions.getInstance().getBestTagMatch(factionTag);
+        if (faction == null)
+            return;
+
+        for (int i = 0; i < amount; i++) {
+            main.dbContext.getBlockTable().asyncLogBlock(UUID.randomUUID(), "KOTHADMIN", faction.getId(), null, -9999, -9999, -9999);
+        }
+
+        sender.sendMessage(ChatColor.GREEN + "Added koth to " + faction.getTag());
+    }
+
+    @Command(
             aliases = "strike",
             desc = "Adds strike to faction",
             perms = "ftop.strike"
@@ -227,6 +245,10 @@ public class FTopCommands {
         StringBuilder materials = new StringBuilder("MATERIAL != 'CHEST' AND Material NOT LIKE 'CHEST-%' AND ");
         for (String type: main.configStore.placed.keySet()) {
             materials.append("Material != '").append(type).append("' AND ");
+        }
+
+        for (String type: BlockTable.specialKeys) {
+            materials.append("Material NOT LIKE '%").append(type).append("%' AND ");
         }
 
         materials = new StringBuilder(materials.substring(0, materials.length() - 4));

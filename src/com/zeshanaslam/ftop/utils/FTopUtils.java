@@ -105,7 +105,8 @@ public class FTopUtils {
                     .replace("%inventorypoints%", String.valueOf(Math.round(fTopStats.invTotalPoints * 100.0) / 100.0))
                     .replace("%ecopoints%", String.valueOf(Math.round(fTopStats.ecoTotalPoints * 100.0) / 100.0))
                     .replace("%warnings%", String.valueOf(fTopStats.warning))
-                    .replace("%strikes%", String.valueOf(fTopStats.strike));
+                    .replace("%strikes%", String.valueOf(fTopStats.strike))
+                    .replace("%koth%", String.valueOf(fTopStats.kothAdmin));
 
             if (hover.contains("%block-check{")) {
                 String material = hover.substring(hover.indexOf("%block-check{") + 13).split("}")[0];

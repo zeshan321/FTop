@@ -214,6 +214,15 @@ public class BlockTable {
         });
     }
 
+    public static String[] specialKeys = new String[] {
+            "WEEKFIN",
+            "DAILYFIN",
+            "CUSTOMFTOP",
+            "WARNING",
+            "STRIKE",
+            "KOTHADMIN"
+    };
+
     public int asyncCalculateWorth(OnCalculateWorth onCalculateWorth) {
         BukkitTask bukkitTask = dbContext.getInstance().getServer().getScheduler().runTaskAsynchronously(dbContext.getInstance(), () -> {
             HashMap<String, FTopStats> fTopStatsHashMap = new HashMap<>();
@@ -260,6 +269,7 @@ public class BlockTable {
                 double invPoints = 0;
                 int warning = 0;
                 int strikes = 0;
+                int koth = 0;
 
                 for (BlockTableData blockTableData : blockTableDataList) {
                     if (blockTableData.material.equals("WEEKFIN")) {// A single record = 1 completed weekly challenge.
@@ -273,6 +283,8 @@ public class BlockTable {
                         warning++;
                     } else if (blockTableData.material.startsWith("STRIKE")) {
                         strikes++;
+                    } else if (blockTableData.material.startsWith("KOTHADMIN")) {
+                        koth++;
                     } else {
                         // Added this to not create sync methods on non-chest blocks. Without large data takes long to calculate.
                         if (blockTableData.material.contains("CHEST")) {
@@ -392,6 +404,7 @@ public class BlockTable {
                 fTopStats.ecoTotalPoints = ecoPoints;
                 fTopStats.strike = strikes;
                 fTopStats.warning = warning;
+                fTopStats.kothAdmin = koth;
                 fTopStatsHashMap.put(faction.getId(), fTopStats);
             }
 
